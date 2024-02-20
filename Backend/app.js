@@ -5,6 +5,7 @@ import morgan from "morgan";
 import connectionToDb from "./config/db.js";
 import userRoute from "./routes/userRoute.js";
 import { config } from "dotenv";
+import errrMiddleware from "./middleware/error.middleware.js";
 config();
 const app = express();
 

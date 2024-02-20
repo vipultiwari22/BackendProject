@@ -1,5 +1,8 @@
 import mongoose, { model } from "mongoose";
-
+import bcrypt from "bcryptjs";
+import JWT from 'jsonwebtoken'
+import config from 'dotenv'
+config()
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -49,6 +52,28 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const user = model("User", userSchema);
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  this.password = await bcrypt.has(this.password, 10);
+});
 
-export default user;
+userSchema.methods = {
+  genrateJWTtoken: async function () {
+    return await JWT.sign({
+      id: this._id,
+      email: this.email,
+      subscription: this.subscription,
+      role: this.role,
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRY,
+      };
+    });
+  }
+};
+
+const User = model("User", userSchema);
+
+export default User;
