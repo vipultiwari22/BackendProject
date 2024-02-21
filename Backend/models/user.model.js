@@ -1,8 +1,7 @@
 import mongoose, { model } from "mongoose";
 import bcrypt from "bcryptjs";
-import JWT from 'jsonwebtoken'
-import config from 'dotenv'
-config()
+import JWT from "jsonwebtoken";
+
 const userSchema = new mongoose.Schema(
   {
     fullName: {
@@ -28,11 +27,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "password is required"],
       minLength: [8, "password must be at lest 8 charecter"],
-      maxLength: [16, "Name must be 16 charecter"],
       select: false,
     },
     avatar: {
-      publid_id: {
+      public_id: {
         type: String,
       },
       secure_url: {
@@ -56,22 +54,27 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
-  this.password = await bcrypt.has(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 userSchema.methods = {
   genrateJWTtoken: async function () {
-    return await JWT.sign({
-      id: this._id,
-      email: this.email,
-      subscription: this.subscription,
-      role: this.role,
+    return await JWT.sign(
+      {
+        id: this._id,
+        email: this.email,
+        subscription: this.subscription,
+        role: this.role,
+      },
       process.env.JWT_SECRET,
       {
         expiresIn: process.env.JWT_EXPIRY,
-      };
-    });
-  }
+      }
+    );
+  },
+  comparePassword: async function (plainTextpassword) {
+    return await bcrypt.compare(plainTextpassword, this.password);
+  },
 };
 
 const User = model("User", userSchema);
