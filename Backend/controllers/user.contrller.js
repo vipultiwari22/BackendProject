@@ -136,4 +136,37 @@ const getProfile = async (req, res) => {
   }
 };
 
-export { register, login, logout, getProfile };
+const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) {
+    return next(new AppError("Email is requred", 400));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(new AppError("Email not registerd", 400));
+  }
+
+  const resetToken = await user.genratePasswordResetToken();
+
+  await user.save();
+  const resetPasswordURL = `${process.env.FORNTEND_URL}/reset-password/${resetToken}`;
+
+  try {
+    await sendEmail(email, subject, message);
+    res.status(200).json({
+      success: true,
+      message: `Reset Password Token has been send to your ${email} successfully`,
+    });
+  } catch (error) {
+    user.forgotPasswordExpiry = undefined;
+    user.forgotPasswordToken = undefined;
+
+    await user.save();
+    return next(new AppError(error.message, 400));
+  }
+};
+
+const resetPassword = async () => {};
+
+export { register, login, logout, getProfile, forgotPassword, resetPassword };
