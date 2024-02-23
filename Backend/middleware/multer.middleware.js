@@ -3,10 +3,10 @@ import multer from "multer";
 
 const upload = multer({
   dest: "uploads/",
-  limits: { filseSize: 50 * 1024 * 1024 },
+  limits: { fileSize: 50 * 1024 * 1024 }, // corrected typo
   storage: multer.diskStorage({
     destination: "uploads/",
-    filename: (_req, file, cn) => {
+    filename: (_req, file, cb) => {
       cb(null, file.originalname);
     },
   }),
@@ -19,7 +19,7 @@ const upload = multer({
       ext !== ".png" &&
       ext !== ".mp4"
     ) {
-      cb(new Error(`Unsupported file type! ${ext}`, false));
+      cb(new Error(`Unsupported file type! ${ext}`), false); // corrected error handling
       return;
     }
     cb(null, true);

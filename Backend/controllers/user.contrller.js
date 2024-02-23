@@ -40,7 +40,7 @@ const register = async (req, res, next) => {
 
     if (req.file) {
       try {
-        const result = await cloudinary.v2.uploader(req.file.path, {
+        const result = await cloudinary.v2.uploader.upload(req.file.path, {
           folder: "lms",
           width: 250,
           height: 250,
@@ -56,8 +56,9 @@ const register = async (req, res, next) => {
           fs.rm(`uploads/${req.file.filename}`);
         }
       } catch (error) {
+        console.error("Cloudinary upload error:", error);
         return next(
-          new AppError(error || "File not uploaded, please try again", 400)
+          new AppError(error || "File not uploaded, please try again", 500)
         );
       }
     }
