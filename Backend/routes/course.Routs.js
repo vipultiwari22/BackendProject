@@ -20,7 +20,7 @@ router
 router
   .route("/:id")
   .get(isLoggedin, getLecturesByCourseId)
-  .put(updateCourse)
-  .delete(deleteCourse);
+  .put(isLoggedin, updateCourse)
+  .delete(isLoggedin, deleteCourse);
 
 export default router;
