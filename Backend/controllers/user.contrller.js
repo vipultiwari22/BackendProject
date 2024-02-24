@@ -48,6 +48,7 @@ const register = async (req, res, next) => {
           height: 250,
           gravity: "faces",
           crop: "fill",
+          timeout: 600000,
         });
 
         if (result) {
@@ -98,7 +99,7 @@ const login = async (req, res, next) => {
     user.password = undefined;
 
     res.cookie("token", token, cookieOptions);
-    res.send(200).json({
+    res.status(200).json({
       success: true,
       message: "user loggedIn successfully",
       user,
