@@ -176,31 +176,126 @@ const resetPassword = async (req, res, next) => {
   const { resetToken } = req.params;
   const { password } = req.body;
 
+  console.log("Reset Token:", resetToken); // Add this line for debugging
+
+  if (!resetToken || typeof resetToken !== "string") {
+    return next(new Error("Reset token is invalid or missing."));
+  }
+
   const forgotPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
 
-  const user = await User.findOne({
-    forgotPasswordToken,
-    forgotPasswordExpiry: { $gt: Date.now() },
-  });
+  console.log("Forgot Password Token:", forgotPasswordToken); // Add this line for debugging
 
-  if (!user) {
-    return next(
-      new AppError("Token is invalid or expired, please try again", 400)
-    );
+  try {
+    const user = await User.findOne({
+      forgotPasswordToken,
+      forgotPasswordExpiry: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(
+        new AppError("Token is invalid or expired, please try again", 400)
+      );
+    }
+
+    user.password = password;
+    user.forgotPasswordToken = undefined;
+    user.forgotPasswordExpiry = undefined;
+    await user.save(); // Await user.save() to wait for the save operation to complete
+
+    res.status(200).json({
+      success: true,
+      message: "Password changed successfully!",
+    });
+  } catch (error) {
+    // Handle any potential errors
+    return next(error);
+  }
+};
+
+const cangePassword = async (req, res, next) => {
+  const { oldPassword, newpassword } = req.body;
+  const { id } = req.user;
+  if (!oldPassword || !newpassword) {
+    return next(new AppError("All fields are mendatory", 400));
   }
 
-  user.password = password;
-  user.forgotPasswordToken = undefined;
-  user.forgotPasswordExpiry = undefined;
-  user.save();
+  const user = await User.findOne(id).select("+password");
 
+  if (!user) {
+    return next(new AppError("User does not exist!", 400));
+  }
+
+  const isPasswordvalid = await user.comparePassword(oldPassword);
+
+  if (!isPasswordvalid) {
+    return next(new AppError("Invalid Old Password!", 400));
+  }
+  user.password = newpassword;
+  await user.save();
+
+  user.password = undefined;
   res.status(200).json({
     success: true,
-    message: "Password changed successfully!",
+    message: "password Changed Successfully!",
   });
 };
 
-export { register, login, logout, getProfile, forgotPassword, resetPassword };
+const updateProfile = async (req, res, next) => {
+  const { fullName } = req.body;
+  const { id } = req.user.id;
+
+  const user = await User.findById(id);
+  if (!user) {
+    return next(new AppError("User does not exist!", 400));
+  }
+
+  if (req.fullName) {
+    user.fullName = fullname;
+  }
+
+  if (req.file) {
+    await cloudinary.v2.uploader.destroy(user.avatar.public_id);
+    try {
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: "lms",
+        width: 250,
+        height: 250,
+        gravity: "faces",
+        crop: "fill",
+      });
+
+      if (result) {
+        user.avatar.public_id = result.public_id;
+        user.avatar.secure_url = result.secure_url;
+
+        // Remove file from server
+        fs.rm(`uploads/${req.file.filename}`);
+      }
+    } catch (error) {
+      console.error("Cloudinary upload error:", error);
+      return next(
+        new AppError(error || "File not uploaded, please try again", 500)
+      );
+    }
+  }
+  await user.save();
+  res.status(200).jason({
+    success: true,
+    message: "User Profile Update successfully!",
+  });
+};
+
+export {
+  register,
+  login,
+  logout,
+  getProfile,
+  forgotPassword,
+  resetPassword,
+  cangePassword,
+  updateProfile,
+};
