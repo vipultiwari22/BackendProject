@@ -7,6 +7,7 @@ import userRoute from "./routes/userRoute.js";
 import { config } from "dotenv";
 import errrMiddleware from "./middleware/error.middleware.js";
 import courseRoute from "./routes/course.Routs.js";
+import paymentroute from "./routes/payment.route.js";
 config();
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/ping", (req, res) => {
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/courses", courseRoute);
+app.use("/api/v1/payments", paymentroute);
 
 app.all("*", (req, res) => {
   res.status(400).send("OOPS! 404 page not found");

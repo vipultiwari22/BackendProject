@@ -45,6 +45,10 @@ const userSchema = new mongoose.Schema(
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: String,
+    subscription: {
+      type: String,
+      status: String,
+    },
   },
   {
     timestamps: true,
@@ -73,7 +77,7 @@ userSchema.methods = {
       }
     );
   },
-  
+
   comparePassword: async function (plainTextpassword) {
     return await bcrypt.compare(plainTextpassword, this.password);
   },
@@ -82,7 +86,7 @@ userSchema.methods = {
     const resetToken = crypto.randomBytes(20).toString("hex");
 
     this.forgotPasswordToken = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(resetToken)
       .digest("hex");
     this.forgotPasswordExpiry = Date.now() + 15 * 60 * 1000; // 15 min from now
