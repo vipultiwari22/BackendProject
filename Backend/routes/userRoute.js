@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   cangePassword,
   forgotPassword,
+  getAllUser,
   getProfile,
   login,
   logout,
@@ -14,6 +15,7 @@ import upload from "../middleware/multer.middleware.js";
 
 const router = Router();
 
+router.get("/getAllUser", getAllUser);
 router.post("/register", upload.single("avatar"), register);
 router.post("/login", login);
 router.get("/logout", logout);

@@ -146,10 +146,10 @@ const addLecturesCourseById = async (req, res, next) => {
         const result = await cloudinary.v2.uploader.upload(req.file.path, {
           folder: "lms",
         });
-        // console.log(json.stringify(result));
+        console.log(JSON.stringify(result));
         if (result) {
-          course.lecture.public_id = result.public_id;
-          course.lecture.secure_url = result.secure_url;
+          lectureData.lecture.public_id = result.public_id;
+          lectureData.lecture.secure_url = result.secure_url;
         }
 
         fs.rm(`uploads/${req.file.filename}`);

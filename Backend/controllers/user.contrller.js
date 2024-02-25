@@ -11,11 +11,26 @@ const cookieOptions = {
   secure: true,
 };
 
+const getAllUser = async (req, res, next) => {
+  try {
+    const Users = await User.find({});
+    if (!Users) {
+      return next(new AppError("we did not get any user in to database", 500));
+    }
+    res.status(200).json({
+      success: true,
+      message: "We got Users!",
+      Users,
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
 const register = async (req, res, next) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, password, role } = req.body;
 
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !role) {
       return next(new AppError("All fields are required", 400));
     }
 
@@ -28,6 +43,7 @@ const register = async (req, res, next) => {
       fullName,
       email,
       password,
+      role,
       avatar: {
         public_id: email,
         secure_url: "#",
@@ -291,6 +307,7 @@ const updateProfile = async (req, res, next) => {
 };
 
 export {
+  getAllUser,
   register,
   login,
   logout,
