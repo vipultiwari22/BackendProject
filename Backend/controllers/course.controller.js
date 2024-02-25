@@ -1,4 +1,3 @@
-import { json } from "express";
 import Course from "../models/course.model.js";
 import AppError from "../utils/error.util.js";
 import cloudinary from "cloudinary";
@@ -123,10 +122,60 @@ const deleteCourse = async (req, res, next) => {
   }
 };
 
+const addLecturesCourseById = async (req, res, next) => {
+  try {
+    const { title, description } = req.body;
+    const { id } = req.params;
+    const course = await Course.findById(id);
+
+    if (!title || !description) {
+      return next(new AppError("All fields are required", 400));
+    }
+
+    if (!course) {
+      return next(new AppError("Course with given id does not exist!", 500));
+    }
+
+    const lectureData = {
+      title,
+      description,
+      lecture: {},
+    };
+    if (req.file) {
+      try {
+        const result = await cloudinary.v2.uploader.upload(req.file.path, {
+          folder: "lms",
+        });
+        // console.log(json.stringify(result));
+        if (result) {
+          course.lecture.public_id = result.public_id;
+          course.lecture.secure_url = result.secure_url;
+        }
+
+        fs.rm(`uploads/${req.file.filename}`);
+      } catch (error) {
+        return next(new AppError(error.message, 500));
+      }
+    }
+    course.lectures.push(lectureData);
+    course.numbersOfLectures = course.lectures.length;
+
+    await course.save();
+    res.status(200).json({
+      success: true,
+      mesage: "Course lectures  Added succesfully to the course!",
+      course,
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
+
 export {
   getAllCourses,
   getLecturesByCourseId,
   createCourse,
   updateCourse,
   deleteCourse,
+  addLecturesCourseById,
 };
