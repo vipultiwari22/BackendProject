@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { authorizedRoles, isLoggedin } from "../middleware/auth.middleware.js";
+import {
+  authorizedRoles,
+  authorizedSubscriber,
+  isLoggedin,
+} from "../middleware/auth.middleware.js";
 import upload from "../middleware/multer.middleware.js";
 
 import {
@@ -20,7 +24,7 @@ router
 
 router
   .route("/:id")
-  .get(isLoggedin, getLecturesByCourseId)
+  .get(isLoggedin, authorizedSubscriber, getLecturesByCourseId)
   .put(isLoggedin, authorizedRoles("ADMIN"), updateCourse)
   .delete(isLoggedin, authorizedRoles("ADMIN"), deleteCourse)
   .post(

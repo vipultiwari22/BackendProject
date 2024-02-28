@@ -85,8 +85,48 @@ const verifySubscription = async (req, res, next) => {
   }
 };
 
-const unSubscription = async (req, res, next) => {};
-const AllPayments = async (req, res, next) => {};
+const unSubscription = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const user = await User.findById(id);
+
+    if (!user) {
+      return next(new AppError("Unauthorized,please login"));
+    }
+    if (user.role === "ADMIN") {
+      return next(new AppError("Admin cannot purchase a subscription", 400));
+    }
+
+    const subscriptionId = user.subscription.id;
+
+    const subscription = await razorpay.subscriptions.cancel(subscriptionId);
+
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Subscription Cancel Successfully!",
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
+const AllPayments = async (req, res, next) => {
+  try {
+    const { count } = req.query;
+    const AllPayments = await razorpay.subscriptions.all({
+      count: count || 10,
+    });
+
+    // const payment =
+    res.status(200).json({
+      success: true,
+      MessageChannel: "All Payments",
+      AllPayments,
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
 
 export {
   getRazorPayApiKey,

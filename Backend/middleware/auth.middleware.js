@@ -24,4 +24,15 @@ const authorizedRoles =
     }
     next();
   };
-export { isLoggedin, authorizedRoles };
+
+const authorizedSubscriber = (req, res, next) => {
+  const subscription = req.user.subscription;
+  const currentRole = req.user.role;
+
+  if (currentRole !== "ADMIN" && subscription.status !== "active") {
+    return next(
+      new AppError("please subscribe to access the course details!", 400)
+    );
+  }
+};
+export { isLoggedin, authorizedRoles, authorizedSubscriber };
