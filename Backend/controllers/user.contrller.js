@@ -30,14 +30,14 @@ const register = async (req, res, next) => {
   try {
     const { fullName, email, password, role } = req.body;
 
-    if (!fullName || !email || !password || !role) {
+    if (!fullName || !email || !password) {
       return next(new AppError("All fields are required", 400));
     }
 
     const userExist = await User.findOne({ email });
 
     if (userExist) {
-      return next(new AppError("Email alerdy exists", 400));
+      return next(new AppError("Email alerdy exists", 409));
     }
     const user = await User.create({
       fullName,

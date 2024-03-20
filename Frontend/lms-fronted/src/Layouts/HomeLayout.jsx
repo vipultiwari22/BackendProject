@@ -37,7 +37,7 @@ function HomeLayout({ children }) {
 
   return (
     <>
-      <div className="min-h-[90vh] bg-gray-500">
+      <div className="min-h-[90vh] bg-gray-900">
         <div className="drawer absolute left-0 z-50 w-fit">
           <input className="drawer-toggle" id="my-drawer" type="checkbox" />
           <div className="drawer-content">
@@ -82,7 +82,7 @@ function HomeLayout({ children }) {
                       <Link to="/login">Login</Link>
                     </button>
                     <button className="btn-secondary px-4 py-1 font-semibold rounded-md w-full">
-                      <Link to="/signup">Signup</Link>
+                      <Link to="/singup">Signup</Link>
                     </button>
                   </div>
                 </li>
