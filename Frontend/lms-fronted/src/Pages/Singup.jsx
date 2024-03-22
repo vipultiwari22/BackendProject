@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import { createAccount } from "../Redux/Slices/AuthSlice";
 
 function Singup() {
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [prevImage, setPrevImage] = useState("");
 
@@ -89,19 +89,26 @@ function Singup() {
     formData.append("email", signupData.email);
     formData.append("password", signupData.password);
     formData.append("avatar", signupData.avatar);
+    try {
+      // Dispatch createAccount action
+      const response = await dispatch(createAccount(formData));
 
-    // Dispatch createAccount action
-    const response = await dispath(createAccount(formData));
-
-    if (response?.payload?.success) {
-      navigate("/");
-      setSignupData({
-        fullName: "",
-        email: "",
-        password: "",
-        avatar: "",
-      });
-      setPrevImage("");
+      if (response?.payload?.success) {
+        toast.success("Account created successfully!"); // Show success message
+        navigate("/"); // Navigate to desired page
+        setSignupData({
+          fullName: "",
+          email: "",
+          password: "",
+          avatar: "",
+        });
+        setPrevImage("");
+      }
+    } catch (error) {
+      // Handle errors if any
+      console.error("Error creating account:", error);
+      // Display appropriate error message to the user
+      toast.error("Failed to create account. Please try again later.");
     }
   }
 

@@ -54,7 +54,7 @@ const register = async (req, res, next) => {
     }
 
     // file Upload
-    console.log("File details > ", JSON.stringify(req.file));
+    // console.log("File details > ", JSON.stringify(req.file));
 
     if (req.file) {
       try {
