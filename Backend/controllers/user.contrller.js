@@ -125,14 +125,14 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = (req, res) => {
+const logout = (req, res,next) => {
   try {
     res.cookie("token", null, {
       secure: true,
       maxAge: 0,
       httpOnly: true,
     });
-    res.statu(200).json({
+    res.status(200).json({
       message: "user loggedOut successfully",
       success: true,
     });
