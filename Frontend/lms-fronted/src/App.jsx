@@ -6,6 +6,7 @@ import AboutUs from "./Pages/AboutUs";
 import NotFound from "./Pages/NotFound";
 import Singup from "./Pages/Singup";
 import Login from "./Pages/Login";
+import Course from "./Pages/CoursesPages/Course";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -17,6 +18,7 @@ function App() {
         <Route path="/About" element={<AboutUs />}></Route>
         <Route path="/singup" element={<Singup />}></Route>
         <Route path="/login" element={<Login />}></Route>
+        <Route path="/courses" element={<Course />}></Route>
 
         <Route path="*" element={<NotFound />}></Route>
       </Routes>

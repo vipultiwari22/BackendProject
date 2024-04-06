@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import HomeLayout from "../Layouts/HomeLayout";
-import { BsPersonCircle } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toast } from "react-hot-toast";
