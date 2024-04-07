@@ -125,7 +125,7 @@ const login = async (req, res, next) => {
   }
 };
 
-const logout = (req, res,next) => {
+const logout = (req, res, next) => {
   try {
     res.cookie("token", null, {
       secure: true,
@@ -306,6 +306,24 @@ const updateProfile = async (req, res, next) => {
   });
 };
 
+const contact = async (req, res, next) => {
+  const { email, name, message } = req.body;
+  try {
+    if (!email || !name || !message) {
+      return next(new AppError('All fields are mendatory'))
+    }
+    await sendEmail(email, name, message);
+
+    res.status(200).json({
+      success: true,
+      message: 'Email sent successfully'
+    });
+
+  } catch (error) {
+    return next(error);
+  }
+
+}
 export {
   getAllUser,
   register,
@@ -316,4 +334,5 @@ export {
   resetPassword,
   cangePassword,
   updateProfile,
+  contact
 };

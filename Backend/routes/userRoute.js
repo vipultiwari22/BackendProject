@@ -9,6 +9,7 @@ import {
   register,
   resetPassword,
   updateProfile,
+  contact
 } from "../controllers/user.contrller.js";
 import { isLoggedin } from "../middleware/auth.middleware.js";
 import upload from "../middleware/multer.middleware.js";
@@ -20,6 +21,7 @@ router.post("/register", upload.single("avatar"), register);
 router.post("/login", login);
 router.get("/logout", logout);
 router.get("/me", isLoggedin, getProfile);
+router.post('/contact', isLoggedin, contact)
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/change-password", isLoggedin, cangePassword);
