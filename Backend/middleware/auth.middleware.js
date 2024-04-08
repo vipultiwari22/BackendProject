@@ -13,17 +13,27 @@ const isLoggedin = async (req, res, next) => {
   next();
 };
 
-const authorizedRoles =
-  (...roles) =>
-  async (req, res, next) => {
-    const currentUserRoles = req.user.role;
-    if (!roles.includes(currentUserRoles)) {
-      return next(
-        new AppError("You do not have permission to accsess this route", 400)
-      );
+const authorizedRoles = (...roles) => {
+  return async (req, res, next) => {
+    try {
+      // Check if user is authenticated
+      if (!req.user) {
+        throw new AppError("You must be logged in to access this route", 401);
+      }
+
+      // Check if user has the required role
+      const currentUserRoles = req.user.role;
+      if (!roles.includes(currentUserRoles)) {
+        throw new AppError("You do not have permission to access this route", 403);
+      }
+
+      // If everything is okay, proceed to the next middleware
+      next();
+    } catch (error) {
+      next(error); // Pass error to the error handling middleware
     }
-    next();
   };
+};
 
 const authorizedSubscriber = (req, res, next) => {
   const subscription = req.user.subscription;

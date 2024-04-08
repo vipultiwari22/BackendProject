@@ -23,6 +23,27 @@ export const getAllCourses = createAsyncThunk('/courses', async () => {
 });
 
 
+export const createNewCourse = createAsyncThunk('/create/course', async (data) => {
+    try {
+        const formdata = new FormData()
+        formdata.append('title', data?.title)
+        formdata.append('description', data?.description)
+        formdata.append('category', data?.category)
+        formdata.append('createdBy', data?.createdBy)
+        formdata.append('thumbnail', data?.thumbnail)
+
+        const response = axiosInstance.post('/courses', formdata)
+        toast.promise(response, {
+            loading: 'Creating new Course',
+            success: 'Course Created Successfully!',
+            error: 'failed to create course'
+        })
+        return (await response).data
+    } catch (error) {
+        toast.error(error?.response?.data?.message)
+    }
+})
+
 
 const courseSlice = createSlice({
     name: 'courses',
