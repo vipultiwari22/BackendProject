@@ -33,7 +33,7 @@ function Contact() {
 
         try {
             // Make a POST request to the '/contact' endpoint with user input data
-            const response = await axiosInstance.post('/contact', userInput);
+            const response = await axiosInstance.post('user/contact', userInput);
 
             // Show toast messages based on the response
             toast.promise(response, {
