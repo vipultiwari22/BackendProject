@@ -9,7 +9,7 @@ function Denied() {
                 403
             </h1>
             <div className='bg-black text-white px-2 text-sm rounded-sm rotate-12 absolute'>Accsess Denied</div>
-            <button onClick={() => navigate(-1)} className='mt-5'>
+            <button onClick={() => navigate('/')} className='mt-5'>
                 <span className='block relative text-white px-8 py-3 bg-[#1A2238] border border-current'>Go Back</span>
             </button>
         </main>
