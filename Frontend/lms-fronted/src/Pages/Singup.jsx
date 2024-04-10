@@ -70,7 +70,7 @@ function Singup() {
       return;
     }
 
-    if (!isValidElement(signupData.password)) {
+    if (!signupData.password) {
       toast.error(
         "Password should be 8 or more characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character."
       );

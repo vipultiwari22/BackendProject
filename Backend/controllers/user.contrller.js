@@ -85,7 +85,7 @@ const register = async (req, res, next) => {
     await user.save();
     user.password = undefined;
 
-    const token = await user.genrateJWTtoken();
+    const token = await user.generateJWTtoken();
     res.cookie("token", token, cookieOptions);
 
     res.status(200).json({
@@ -104,24 +104,23 @@ const login = async (req, res, next) => {
     if (!email || !password) {
       return next(new AppError("All fields are required"));
     }
-    const user = await User.findOne({
-      email,
-    }).select("+password");
-    if (!user || !user.comparePassword(password)) {
-      return next(new AppError("password does Not match"));
+    const user = await User.findOne({ email }).select("+password");
+    if (!user || !(await user.comparePassword(password))) {
+      return next(new AppError("Invalid email or password"));
     }
 
-    const token = await user.genrateJWTtoken();
+    const token = await user.generateJWTtoken();
     user.password = undefined;
 
     res.cookie("token", token, cookieOptions);
     res.status(200).json({
       success: true,
-      message: "user loggedIn successfully",
+      message: "User logged in successfully",
       user,
     });
   } catch (error) {
-    return next(new AppError(error.message, 500));
+    console.error('Login Error:', error); // Log any errors that occur during login
+    return next(new AppError("Internal server error", 500)); // Return internal server error
   }
 };
 

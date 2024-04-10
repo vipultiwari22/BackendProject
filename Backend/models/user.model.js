@@ -1,15 +1,18 @@
-import mongoose, { model } from "mongoose";
-import bcrypt from "bcryptjs";
-import JWT from "jsonwebtoken";
-import crypto from "crypto";
+import dotenv from 'dotenv';
+import mongoose from 'mongoose'; // Import mongoose
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'; // Changed import name to lowercase
+import crypto from 'crypto';
+
+dotenv.config();
 
 const userSchema = new mongoose.Schema(
   {
     fullName: {
       type: String,
       required: [true, "Name is required"],
-      minLength: [5, "Name must be at lest 5 charecter"],
-      maxLength: [50, "Name must be 50 charecter"],
+      minLength: [5, "Name must be at least 5 characters"], // Fixed typo in error message
+      maxLength: [50, "Name must be 50 characters at most"], // Fixed typo in error message
       trim: true,
       lowercase: true,
     },
@@ -26,8 +29,8 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "password is required"],
-      minLength: [8, "password must be at lest 8 charecter"],
+      required: [true, "Password is required"],
+      minLength: [8, "Password must be at least 8 characters"],
       select: false,
     },
     avatar: {
@@ -41,10 +44,10 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["USER", "ADMIN"],
-      defualt: "USER",
+      default: "USER", // Fixed typo in default value
     },
     forgotPasswordToken: String,
-    forgotPasswordExpiry: String,
+    forgotPasswordExpiry: Date, // Changed to Date type
     subscription: {
       type: String,
       status: String,
@@ -63,8 +66,8 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods = {
-  genrateJWTtoken: async function () {
-    return await JWT.sign(
+  generateJWTtoken: async function () {
+    return await jwt.sign( // Changed to lowercase
       {
         id: this._id,
         email: this.email,
@@ -82,7 +85,7 @@ userSchema.methods = {
     return await bcrypt.compare(plainTextpassword, this.password);
   },
 
-  genratePasswordResetToken: async function () {
+  generatePasswordResetToken: async function () {
     const resetToken = crypto.randomBytes(20).toString("hex");
 
     this.forgotPasswordToken = crypto
@@ -93,6 +96,6 @@ userSchema.methods = {
   },
 };
 
-const User = model("User", userSchema);
+const User = mongoose.model("User", userSchema); // Changed to default import syntax
 
 export default User;
