@@ -31,31 +31,35 @@ function Contact() {
             return;
         }
 
+        // Show loading message immediately
+        const loadingToast = toast.loading('Submitting your message...');
+
         try {
             // Make a POST request to the '/contact' endpoint with user input data
             const response = await axiosInstance.post('user/contact', userInput);
 
-            // Show toast messages based on the response
-            toast.promise(response, {
-                loading: 'Submitting your message...',
-                success: 'Form submitted successfully!',
-                error: 'Failed to submit the form'
-            });
+            // Dismiss the loading toast
+            toast.dismiss(loadingToast);
 
-            // If the response indicates success, clear the form inputs
+            // Show toast messages based on the response
             if (response.data.success) {
+                toast.success('Form submitted successfully!');
+                // If the response indicates success, clear the form inputs
                 setUserInput({
                     name: '',
                     email: '',
                     message: ''
                 });
+            } else {
+                toast.error('Failed to submit the form');
             }
         } catch (error) {
+            // Dismiss the loading toast
+            toast.dismiss(loadingToast);
             // If an error occurs during the POST request, show an error toast message
             toast.error('Operation failed');
         }
-
-    }
+    };
 
     return (
         <HomeLayout>

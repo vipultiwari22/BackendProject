@@ -21,7 +21,7 @@ router.post("/register", upload.single("avatar"), register);
 router.post("/login", login);
 router.get("/logout", logout);
 router.get("/me", isLoggedin, getProfile);
-router.post('/contact', isLoggedin, contact)
+router.post('/contact', contact)
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password", resetPassword);
 router.post("/change-password", isLoggedin, cangePassword);
