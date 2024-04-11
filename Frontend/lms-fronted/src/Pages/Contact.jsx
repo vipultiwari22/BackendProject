@@ -37,13 +37,12 @@ function Contact() {
         try {
             // Make a POST request to the '/contact' endpoint with user input data
             const response = await axiosInstance.post('user/contact', userInput);
-
             // Dismiss the loading toast
             toast.dismiss(loadingToast);
 
             // Show toast messages based on the response
             if (response.data.success) {
-                toast.success('Form submitted successfully!');
+                toast.success('Message sent successfully!');
                 // If the response indicates success, clear the form inputs
                 setUserInput({
                     name: '',

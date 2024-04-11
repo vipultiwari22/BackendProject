@@ -12,6 +12,7 @@ import Denied from "./Pages/Denied";
 import CourseDescription from "./Pages/CoursesPages/CourseDescription";
 import RequireAuth from "./Components/Auth/RequireAuth";
 import CreateCourse from "./Pages/CoursesPages/CreateCourse";
+import UserProfile from "./Pages/User/UserProfile";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -30,6 +31,10 @@ function App() {
 
         <Route element={<RequireAuth allowedRole={['ADMIN']} />}>
           <Route path="/course/create" element={<CreateCourse />}></Route>
+        </Route>
+
+        <Route element={<RequireAuth allowedRole={['ADMIN', 'USER']} />}>
+          <Route path="/user/profile" element={<UserProfile />} ></Route>
         </Route>
 
         <Route path="*" element={<NotFound />}></Route>
