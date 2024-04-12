@@ -270,7 +270,7 @@ const updateProfile = async (req, res, next) => {
   }
 
   if (req.fullName) {
-    user.fullName = fullname;
+    user.fullName = fullName;
   }
 
   if (req.file) {
